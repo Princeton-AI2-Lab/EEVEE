@@ -1,0 +1,100 @@
+experiment_name: "eevee_demo"
+save_path: "results"
+
+models:
+  generator: "openrouter:MODEL_NAME"
+  router: "openrouter:MODEL_NAME"
+  prompt_mutation: "openrouter:MODEL_NAME"
+  prompt_reflection: "openrouter:MODEL_NAME"
+  router_mutation: "openrouter:MODEL_NAME"
+  router_analysis: "openrouter:MODEL_NAME"
+  router_reflection: "openrouter:MODEL_NAME"
+  judge: "openrouter:MODEL_NAME"
+
+api_params_config: ./configs/api_params_config.json
+
+tasks:
+  - name: "gpqa_diamond"
+    mode: "train"
+    judge_mode: "rule"
+  - name: "theorem_qa"
+    mode: "train"
+    judge_mode: "rule"
+  - name: "formula"
+    mode: "train"
+    judge_mode: "rule"
+  - name: "humaneval"
+    mode: "train"
+    judge_mode: "rule"
+
+data:
+  max_benchmark_items: 500
+  split_ratio: [0.5, 0.5]
+  val_ratio_from_train: 0.5
+  benchmark_mode: true
+  exclude_train_val_from_test: true
+  seed: 42
+
+# Prompt set size K in the paper.
+prompt_set_size: 4
+
+# Stage 1: initialization.
+initialization:
+  prompt_evolve_budget: 10
+
+# Stage 2: exploration.
+exploration:
+  total_mini_step_budget: 150
+  router_window_size: 3
+  prompt_window_size: 3
+  phase_switch_epsilon: 0.005
+
+router:
+  max_analysis_cases: 5
+  # Temporary router pool B_R.
+  temporary_pool_max_size: 6
+  score_weights:
+    accuracy: 0.6
+    consistency: 0.2
+    balance: 0.2
+  final_score_weights:
+    accuracy: 1.0
+    consistency: 0.0
+    balance: 0.0
+  consistency:
+    compact_weight: 0.5
+    separate_weight: 0.5
+  balance:
+    use_weight: 0.5
+    distribution_weight: 0.5
+
+# Stage 3: convergence.
+convergence:
+  prompt_evolve_budget_per_slot: 60
+
+prompt:
+  minibatch_size: 5
+  max_parallel_slots: 4
+  # Temporary prompt pool B_P,k.
+  temporary_pool_max_size: 6
+
+random:
+  seed: 42
+
+execution:
+  eval_workers: 50
+  router_workers: 50
+  test_workers: 50
+  test_repeats: 3
+  max_prompt_length: 2000
+  max_retry: 3
+  max_examples: 5
+
+logging:
+  level: "INFO"
+  llm_call_log: false
+  wandb:
+    enabled: false
+    offline: true
+    project: "eevee"
+    entity: null

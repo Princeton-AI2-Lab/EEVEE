@@ -1,0 +1,6 @@
+family: finer
+processor: tasks.finer.data_worker:DataProcessor
+tasks:
+  finer:
+    train_data: ./tasks/finer/data/finer_train_batched.jsonl
+    test_data: ./tasks/finer/data/finer_test_batched.jsonl

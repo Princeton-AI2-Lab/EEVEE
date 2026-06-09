@@ -1,0 +1,6 @@
+family: mbpp
+processor: tasks.mbpp.data_worker:DataProcessor
+tasks:
+  mbpp:
+    train_data: ./tasks/mbpp/data/mbpp-train.jsonl
+    test_data: ./tasks/mbpp/data/mbpp-test.jsonl

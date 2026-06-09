@@ -1,0 +1,6 @@
+family: formula
+processor: tasks.formula.data_worker:DataProcessor
+tasks:
+  formula:
+    train_data: ./tasks/formula/data/formula_train.jsonl
+    test_data: ./tasks/formula/data/formula_test.jsonl

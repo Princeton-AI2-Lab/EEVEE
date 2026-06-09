@@ -1,0 +1,6 @@
+family: humaneval
+processor: tasks.humaneval.data_worker:DataProcessor
+tasks:
+  humaneval:
+    train_data: ./tasks/humaneval/data/humaneval.jsonl
+    test_data: ./tasks/humaneval/data/humaneval.jsonl

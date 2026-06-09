@@ -1,0 +1,8 @@
+results/
+*.log
+*.pyc
+__pycache__/
+.env
+**/data
+.agents/
+.codex/

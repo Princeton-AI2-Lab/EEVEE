@@ -1,0 +1,16 @@
+{{ router_prompt }}
+
+Available labels:
+{% for item in slot_entries %}
+- {{ item.slot_label }}
+  Auxiliary prompt for {{ item.slot_label }}:
+  ```
+  {{ item.prompt_text }}
+  ```
+{% endfor %}
+
+Task:
+{{ visible_text }}
+
+Return JSON only:
+{"label": "A", "reason": "short reason"}

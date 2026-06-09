@@ -1,0 +1,29 @@
+Our router is responsible for choosing the right routing label for the task. However, it sometimes picks the wrong label; analyze and explain why these tasks should use the better label.
+Read the task carefully, identify the input format, and infer what signal the router should notice here.
+Compare the wrong label and the better label using the downstream prompt texts, the model outputs, and the ground truth.
+First identify what capability, output constraint, reasoning style, or domain handling this task actually needs.
+Then explain why the better label is a better match because its downstream prompt is more likely to provide that needed behavior.
+Be concrete about why the wrong label is misleading here and what routing rule would generalize to future examples.
+Keep the answer short but concrete. Your answer should follow this pattern: the router should choose label X' rather than label X, because choosing X' helps the model ... whereas choosing X leads to ...
+
+Task:
+{{ visible_text }}
+
+Ground truth:
+{{ ground_truth }}
+
+Wrong label: {{ wrong_slot_label }}
+Wrong prompt:
+```
+{{ wrong_prompt_text }}
+```
+Wrong answer:
+{{ wrong_answer }}
+
+Better label: {{ better_slot_label }}
+Better prompt:
+```
+{{ better_prompt_text }}
+```
+Better answer:
+{{ better_answer }}

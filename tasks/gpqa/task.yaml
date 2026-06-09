@@ -1,0 +1,6 @@
+family: gpqa
+processor: tasks.gpqa.data_worker:DataProcessor
+tasks:
+  gpqa_diamond:
+    train_data: ./tasks/gpqa/data/gpqa_diamond.jsonl
+    test_data: ./tasks/gpqa/data/gpqa_diamond.jsonl

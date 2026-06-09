@@ -1,0 +1,6 @@
+family: theorem_qa
+processor: tasks.theorem_qa.data_worker:DataProcessor
+tasks:
+  theorem_qa:
+    train_data: ./tasks/theorem_qa/data/theorem_qa_test.jsonl
+    test_data: ./tasks/theorem_qa/data/theorem_qa_test.jsonl

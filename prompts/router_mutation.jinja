@@ -1,0 +1,52 @@
+You are an expert prompt engineer writing one new prompt for a router.
+The router selects a label based on the task content; each label maps to a different prompt that steers how the model answers. To give each task the right kind of guidance, the router prompt must explain clearly when to choose which label. Use the task examples and prior router prompt designs to shape the new router prompt.
+Below you will find: example tasks like those the router may see, the current label set, the auxiliary prompt applied after each choice to guide the model's answer, illustrative routing examples, and prior router prompts for reference.
+
+## Example Tasks
+These are raw routed examples. Do not solve them.
+Use them to infer the shared routing patterns, label distinctions, output-contract differences, and failure modes.
+
+## Available Labels
+{% for item in slot_entries %}
+- {{ item.slot_label }}
+  Auxiliary prompt for {{ item.slot_label }}:
+  ```
+  {{ item.prompt_text }}
+  ```
+{% endfor %}
+
+{% for sample in support_examples %}
+### Example {{ loop.index }}
+Task Input:
+{{ sample.get("visible_text", "") }}
+Best Label:
+{{ sample.get("best_label", "") }}
+{% endfor %}
+
+{% if router_a or router_b %}
+
+## Reference Router Prompts
+### Prompt A
+```
+{{ router_a }}
+```
+
+### Prompt B
+```
+{{ router_b }}
+```
+{% endif %}
+
+## Task
+Write one new router system prompt as plain text.
+Use the routed examples, reference router prompts, and available labels to propose a router prompt that can improve routing performance on examples like these.
+Read the inputs carefully, identify the input format, and infer a detailed routing description for how tasks should be assigned to the available labels.
+Infer the superior routing choice pattern from the examples and preserve it exactly.
+Identify niche, domain-specific, task-specific, and format-specific routing information that may not be reliably available to the assistant in the future, and include the useful parts explicitly in the router prompt.
+If the examples suggest a generalizable routing strategy, include that strategy in the router prompt as well.
+Preserve the label set and the routing contract exactly.
+If routing depends on subtle output-contract differences, artifact requirements, reasoning style, domain cues, or normalization rules, state those routing rules explicitly instead of relying on keyword overlap alone.
+Provide enough concrete detail to make the router instruction useful for future unseen examples, even if that makes it longer.
+Write the routing policy directly in terms of when to choose A, B, C, D, etc.
+You may use the auxiliary prompts above to understand what each label is trying to help with. Do not explicitly reference or quote them in the router prompt.
+Provide the new router prompt within ``` blocks.

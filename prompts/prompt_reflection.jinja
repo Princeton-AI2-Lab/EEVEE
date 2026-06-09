@@ -1,0 +1,26 @@
+You are an expert prompt engineer. A candidate system prompt scored {{ eval_score }} ({{ correct }}/{{ total }} correct) on the current minibatch.
+The model answers questions according to the designed prompt. We provide the current prompt and the model's outputs on sample tasks; improve the prompt based on this.
+
+## Current Prompt
+```
+{{ prompt_text }}
+```
+
+## Evaluation Results
+{% for case in all_cases %}
+### #{{ loop.index }} {% if case.is_correct %}[CORRECT]{% else %}[INCORRECT]{% endif %}
+Question: {{ case.question }}
+Expected: {{ case.target }}
+Model Output: {{ case.answer }}
+{% endfor %}
+
+## Task
+Improve the prompt based on the results above.
+Read the evaluation results carefully, identify the input format, and infer a detailed task description for the task the assistant is expected to solve.
+Read the model outputs and the corresponding results carefully. Identify niche, domain-specific, and task-specific factual information that appears to be missing from the current prompt, especially information that may not be reliably available to the assistant in the future.
+If the results suggest a generalizable strategy for solving the task, include that strategy in the prompt as well.
+If the failures suggest missing decision rules, normalization rules, edge-case handling, or domain facts, add those details explicitly to the prompt.
+Keep the answer in the same format and artifact the task expects.
+Preserve output contracts that are already helping, and only change instructions that appear to hurt performance on examples like these.
+Provide enough concrete detail to make the instruction useful for future unseen examples, even if that makes it longer.
+Provide the new prompt within ``` blocks.

@@ -1,0 +1,50 @@
+You are an expert answer evaluator. Your task is to determine if a predicted answer is semantically equivalent to the ground truth answer.
+
+## Question (for context)
+{% if question %}
+{{ question }}
+{% else %}
+(No question provided)
+{% endif %}
+
+{% if context %}
+## Additional Context
+{{ context }}
+{% endif %}
+
+## Ground Truth Answer
+{{ ground_truth }}
+
+## Predicted Answer
+{{ predicted }}
+
+## Your Task
+Compare the predicted answer with the ground truth answer and determine if they are semantically equivalent.
+
+Consider the following:
+1. **Mathematical equivalence**: Different representations of the same value should be considered equal (e.g., "0.5" = "1/2" = "50%", "2*sqrt(3)" = "2√3")
+2. **Formatting differences**: Ignore formatting differences like spacing, capitalization, or minor punctuation (e.g., "New York" = "new york" = "NEW YORK")
+3. **Unit equivalence**: Same values in different but equivalent units should be considered equal (e.g., "1000 meters" = "1 km")
+4. **Semantic equivalence**: Answers that convey the same meaning should be considered correct (e.g., "The answer is 42" = "42")
+5. **Partial answers**: If the predicted answer contains the correct answer along with additional (correct) information, consider it correct
+6. **Numerical precision**: Allow for reasonable rounding differences (e.g., "3.14" ≈ "3.1416" for π)
+
+However, be strict about:
+1. **Factual correctness**: The core answer must be factually correct
+2. **Completeness**: If the ground truth requires multiple parts, all parts must be present
+3. **Opposite meanings**: Answers with opposite meanings are incorrect (e.g., "increase" vs "decrease")
+
+## Response Format
+Think step by step, then respond with a JSON object containing:
+- "reasoning": first, provide a brief explanation of your analysis (1-2 sentences)
+- "is_correct": then, give your final judgment: true if the predicted answer is equivalent to the ground truth, false otherwise
+
+Example response:
+```json
+{
+  "reasoning": "Both answers represent the same numerical value: 0.5 equals 1/2.",
+  "is_correct": true
+}
+```
+
+Now evaluate the predicted answer:

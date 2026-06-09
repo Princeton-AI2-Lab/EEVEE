@@ -1,0 +1,39 @@
+You are an expert prompt engineer improving a prompt for a router.
+The router selects a label based on the task content; each label maps to a different prompt that steers how the model answers. To give each task the right kind of guidance, the router prompt must spell out clearly when to pick which label. The current router prompt leads to poor choices on some tasks; analyze these failures and improve the router prompt so the router makes better selections.
+Below you will find: the current router prompt, every label the router may choose, the auxiliary prompt applied after each choice to guide the model's answer, and failure cases to learn from.
+
+## Current Router Prompt
+```
+{{ router_prompt }}
+```
+
+## Available Labels
+{% for item in slot_entries %}
+- {{ item.slot_label }}
+  Auxiliary prompt for {{ item.slot_label }}:
+  ```
+  {{ item.prompt_text }}
+  ```
+{% endfor %}
+
+## Routed Failure Analyses
+{% for item in analysis_cases %}
+### #{{ loop.index }}
+Task: 
+{{ item.visible_text }}
+Wrong Label: {{ item.wrong_slot_label }}
+Better Label: {{ item.better_slot_label }}
+Routing Analysis: {{ item.suggestion }}
+{% endfor %}
+
+## Task
+Improve the router prompt based on the routed failure analyses above.
+Read the failure analyses carefully, identify the input format, and infer a detailed routing description for how tasks should be assigned to the available labels.
+Read carefully. Identify niche, domain-specific, task-specific, and format-specific routing information that appears to be missing from the current router prompt, especially information that may not be reliably available to the assistant in the future.
+If the failures suggest a generalizable routing strategy, include that strategy in the router prompt as well.
+If the failures suggest missing decision rules, normalization rules, edge-case handling, or domain facts that affect routing, add those details explicitly to the router prompt.
+Only change routing instructions that appear to hurt performance on examples like these, and preserve routing rules that are already helping.
+Provide enough concrete detail to make the router instruction useful for future unseen examples, even if that makes it longer.
+Write the routing policy directly in terms of when to choose A, B, C, D, etc.
+You may use the auxiliary prompts above to understand what each label is trying to help with. Do not explicitly reference or quote them in the router prompt.
+Provide the new router prompt within ``` blocks.

@@ -1,0 +1,19 @@
+{% for ex in fewshot_examples %}Example task: {{ ex.text }}
+Your code should pass these tests:
+{{ ex.test_list[0] }}
+{{ ex.test_list[1] }}
+{{ ex.test_list[2] }}
+Solution:
+```python
+{{ ex.code }}
+```
+
+{% endfor %}Now solve this task: {{ text }}
+Your code should pass these tests:
+{{ test_list[0] }}
+{{ test_list[1] }}
+{{ test_list[2] }}
+
+IMPORTANT OUTPUT REQUIREMENT FOR THIS TASK:
+- In your final answer, output ONLY the complete Python function definition (including the `def` line).
+- Do not include markdown fences, explanations, or any extra text.

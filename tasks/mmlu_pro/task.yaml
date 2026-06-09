@@ -1,0 +1,6 @@
+family: mmlu_pro
+processor: tasks.mmlu_pro.data_worker:DataProcessor
+tasks:
+  mmlu_pro:
+    train_data: ./tasks/mmlu_pro/data/mmlu_pro-all.jsonl
+    test_data: ./tasks/mmlu_pro/data/mmlu_pro-all.jsonl

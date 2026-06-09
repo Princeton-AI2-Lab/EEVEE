@@ -1,0 +1,38 @@
+You are a prompt engineer writing one new system prompt.
+The prompt you design should help the model answer questions. You may refer to sampled question examples and historical prompt designs.
+
+## Example Questions
+These are raw questions from the current minibatch. Do not answer them.
+Use them to infer the shared task patterns, output contracts, and failure modes.
+{% for sample in examples %}
+### Example {{ loop.index }}
+Question:
+{{ sample.get("question", "") }}
+{% if sample.get("context") %}
+
+Additional Context:
+{{ sample.get("context") }}
+{% endif %}
+{% endfor %}
+{% if context_prompts %}
+
+## Reference Prompts
+{% for item in context_prompts %}
+- Prompt {{ loop.index }}
+```
+{{ item.prompt_text }}
+```
+{% endfor %}
+{% endif %}
+
+## Task
+Write one new system prompt as plain text.
+Use the examples and reference prompts to propose a prompt that can improve performance on tasks like these.
+Read the inputs carefully, identify the input format, and infer a detailed task description for the task the assistant is expected to solve.
+Infer the real task and output contract from the questions and preserve it exactly.
+Identify niche, domain-specific, and task-specific factual information that may not be reliably available to the assistant in the future, and include the useful parts explicitly in the prompt.
+If the examples suggest a generalizable strategy for solving the task, include that strategy in the prompt as well.
+Keep the answer in the same format and artifact the task expects.
+If the task expects only a continuation, function body, short answer, JSON object, XML snippet, or another partial output, do not rewrite it into a full function, wrapper, markdown block, explanation, or any other expanded format.
+Provide enough concrete detail to make the instruction useful for future unseen examples, even if that makes it longer.
+Provide the new prompt within ``` blocks.
