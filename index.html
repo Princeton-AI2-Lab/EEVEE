@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="EEVEE is a multi-dataset test-time prompt learning framework for self-improving LLM agents.">
+  <meta name="keywords" content="EEVEE, test-time prompt learning, self-improving agents, LLM agents, prompt evolution, router">
+  <title>EEVEE: Towards Test-time Prompt Learning in the Real World for Self-Improving Agents</title>
+  <link rel="icon" href="static/images/favicon.svg?v=blue" type="image/svg+xml">
+  <link rel="stylesheet" href="static/css/site.css">
+  <script src="static/js/site.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="EEVEE home">
+        <img class="brand-logo" src="assets/logo.png" alt="EEVEE">
+        <span class="brand-name">EEVEE</span>
+      </a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#video">Video</a>
+        <a href="#motivation">Why</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#cases">Cases</a>
+        <a href="#bibtex">BibTeX</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="top" class="hero">
+      <div class="container hero-inner">
+        <img class="hero-logo" src="assets/logo.png" alt="EEVEE logo">
+        <h1>EEVEE: Towards Test-time Prompt Learning in the Real World for Self-Improving Agents</h1>
+        <p class="authors">Weixian Xu, Shilong Liu, Mengdi Wang</p>
+
+        <div class="actions" aria-label="Project links">
+          <a class="button primary" href="assets/paper.pdf">Paper PDF</a>
+          <a class="button" href="#video">Video</a>
+          <a class="button" href="https://github.com/Princeton-AI2-Lab/EEVEE">Code</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="abstract" class="section article-section">
+      <div class="container article-grid">
+        <div class="article-copy">
+          <p class="section-kicker">Abstract</p>
+          <h2>Learning prompts in the messy, mixed-task setting.</h2>
+          <p>
+            EEVEE is a multi-dataset test-time prompt learning framework for LLM agents. Instead of adapting to one stationary benchmark, it handles incoming task streams drawn from different datasets, domains, formats, and evaluation rules.
+          </p>
+          <p>
+            The core idea is to reduce cross-dataset interference with a learned router. Each input is assigned to one specialized prompt slot, so feedback from code, formula, theorem QA, and closed-book science QA no longer has to compress into one shared instruction.
+          </p>
+          <p>
+            Router and prompt learning are coupled: routing decides which examples each prompt sees, while prompt behavior determines whether a route is useful. EEVEE addresses this with router-prompt co-evolution and a three-stage training process.
+          </p>
+        </div>
+
+        <aside class="abstract-panel" aria-label="Key results">
+          <div class="result-stat">
+            <span>+10.38</span>
+            <p>average points over Qwen3-4B-Instruct</p>
+          </div>
+          <div class="result-stat">
+            <span>+24.32</span>
+            <p>average points over DeepSeek-V3.2</p>
+          </div>
+          <div class="result-stat">
+            <span>+41.53</span>
+            <p>cumulative retention after four tasks</p>
+          </div>
+          <div class="result-stat">
+            <span>4.9x</span>
+            <p>fewer final-test tokens than ACE</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="video" class="section video-section">
+      <div class="container narrow">
+        <p class="section-kicker">Video</p>
+        <h2>EEVEE</h2>
+        <div class="video-frame">
+          <video class="project-video" controls playsinline preload="auto" poster="assets/video-cover.png">
+            <source src="assets/video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <section id="motivation" class="section story-band">
+      <div class="container story-grid">
+        <article class="story-copy">
+          <p class="section-kicker">Why EEVEE</p>
+          <h2>One learned prompt breaks down as task mixtures grow.</h2>
+          <p>
+            Prior test-time prompt learning methods are strongest when the feedback stream comes from one benchmark. Real agents are different: they see knowledge QA, symbolic reasoning, financial formulas, and code generation in the same operating loop.
+          </p>
+          <p>
+            In the paper's incremental setting, GEPA and ACE accumulate negative retention as more benchmarks enter the stream. EEVEE stays positive because the router separates incompatible feedback before each prompt specializes.
+          </p>
+        </article>
+
+        <figure class="media-frame">
+          <div class="media-shell" style="--ratio: 3.09 / 1;">
+            <a class="figure-link" href="assets/figures/multi-benchmark-curve.pdf" aria-label="Open incremental retention figure PDF">
+              <img src="assets/figures/multi-benchmark-curve.png" alt="Incremental multi-benchmark retention results for EEVEE, ACE, and GEPA.">
+            </a>
+          </div>
+          <figcaption>
+            Retention as GPQA Diamond, Formula, TheoremQA, and HumanEval are added to the mixed stream.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="method" class="section article-section">
+      <div class="container narrow center-heading">
+        <p class="section-kicker">Method</p>
+        <h2>Route first, then specialize.</h2>
+        <p>
+          At inference time, the router selects a prompt slot for each input and the frozen target model answers with that prompt. At learning time, EEVEE alternates router evolution and prompt evolution so the assignment policy and slot behavior improve together.
+        </p>
+      </div>
+
+      <div class="container">
+        <figure class="media-frame large framework-figure">
+          <div class="media-shell" style="--ratio: 5883 / 2274;">
+            <a class="figure-link" href="assets/figures/eevee-main-framework.pdf" aria-label="Open EEVEE framework figure PDF">
+              <img src="assets/figures/eevee-main-framework.png" alt="EEVEE framework with router, prompt set, target model, and co-evolution loop.">
+            </a>
+          </div>
+          <figcaption>
+            The router chooses a specialized prompt slot; learning co-evolves router prompts and model prompts through mutation, analysis, reflection, scoring, and regrouping.
+          </figcaption>
+        </figure>
+
+        <div class="process-strip" aria-label="Three training stages">
+          <article>
+            <span>01</span>
+            <h3>Initialize</h3>
+            <p>Build a Pareto-front prompt pool and greedily retain prompts with complementary validation coverage.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Explore</h3>
+            <p>Alternate lightweight router and prompt updates while the assignment policy is still moving.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Converge</h3>
+            <p>Fix the stable router and spend a larger prompt-learning budget inside each routed group.</p>
+          </article>
+        </div>
+
+        <figure class="media-frame framework-figure">
+          <div class="media-shell" style="--ratio: 4290 / 2048;">
+            <a class="figure-link" href="assets/figures/eevee-3stage.pdf" aria-label="Open three-stage training figure PDF">
+              <img src="assets/figures/eevee-3stage.png" alt="Three-stage EEVEE training design with initialization, exploration, and convergence.">
+            </a>
+          </div>
+          <figcaption>
+            Three-stage design: initialization, exploration, and convergence.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="results" class="section results-section">
+      <div class="container narrow center-heading">
+        <p class="section-kicker">Results</p>
+        <h2>Gains are largest when benchmarks are learned together.</h2>
+        <p>
+          The four-benchmark suite mixes GPQA Diamond, Formula, TheoremQA, and HumanEval. EEVEE improves both target models and avoids the severe multi-task retention loss seen in single-prompt baselines.
+        </p>
+      </div>
+
+      <div class="container">
+        <div class="table-wrap">
+          <table>
+            <caption>Main four-benchmark results. Scores are percentages averaged over three runs; colored subscripts denote differences from the corresponding target-model baseline.</caption>
+            <thead>
+              <tr>
+                <th>Target model</th>
+                <th>Method</th>
+                <th>GPQA Diamond</th>
+                <th>Formula</th>
+                <th>TheoremQA</th>
+                <th>HumanEval</th>
+                <th>Avg.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td rowspan="4">Qwen3-4B-Instruct</td>
+                <td>Baseline</td>
+                <td>56.00</td>
+                <td>45.22</td>
+                <td>14.79</td>
+                <td>49.46</td>
+                <td>41.37</td>
+              </tr>
+              <tr>
+                <td>ACE</td>
+                <td>48.93<span class="delta negative">-7.07</span></td>
+                <td>39.67<span class="delta negative">-5.55</span></td>
+                <td>15.84<span class="delta positive">+1.05</span></td>
+                <td>35.23<span class="delta negative">-14.23</span></td>
+                <td>34.92<span class="delta negative">-6.45</span></td>
+              </tr>
+              <tr>
+                <td>GEPA</td>
+                <td>50.84<span class="delta negative">-5.16</span></td>
+                <td>49.83<span class="delta positive">+4.61</span></td>
+                <td>19.62<span class="delta positive">+4.83</span></td>
+                <td>30.62<span class="delta negative">-18.84</span></td>
+                <td>37.73<span class="delta negative">-3.64</span></td>
+              </tr>
+              <tr class="highlight">
+                <td>EEVEE</td>
+                <td>54.55<span class="delta negative">-1.45</span></td>
+                <td>54.55<span class="delta positive">+9.33</span></td>
+                <td>25.27<span class="delta positive">+10.48</span></td>
+                <td>72.63<span class="delta positive">+23.17</span></td>
+                <td>51.75<span class="delta positive">+10.38</span></td>
+              </tr>
+              <tr>
+                <td rowspan="4">DeepSeek-V3.2</td>
+                <td>Baseline</td>
+                <td>64.98</td>
+                <td>30.00</td>
+                <td>21.21</td>
+                <td>42.82</td>
+                <td>39.75</td>
+              </tr>
+              <tr>
+                <td>ACE</td>
+                <td>55.89<span class="delta negative">-9.09</span></td>
+                <td>37.78<span class="delta positive">+7.78</span></td>
+                <td>27.05<span class="delta positive">+5.84</span></td>
+                <td>78.59<span class="delta positive">+35.77</span></td>
+                <td>49.83<span class="delta positive">+10.08</span></td>
+              </tr>
+              <tr>
+                <td>GEPA</td>
+                <td>41.75<span class="delta negative">-23.23</span></td>
+                <td>60.56<span class="delta positive">+30.56</span></td>
+                <td>31.72<span class="delta positive">+10.51</span></td>
+                <td>89.29<span class="delta positive">+46.47</span></td>
+                <td>55.83<span class="delta positive">+16.08</span></td>
+              </tr>
+              <tr class="highlight">
+                <td>EEVEE</td>
+                <td>63.08<span class="delta negative">-1.90</span></td>
+                <td>60.55<span class="delta positive">+30.55</span></td>
+                <td>39.84<span class="delta positive">+18.63</span></td>
+                <td>92.82<span class="delta positive">+50.00</span></td>
+                <td>64.07<span class="delta positive">+24.32</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="figure-story">
+          <article>
+            <p class="section-kicker">Single benchmark check</p>
+            <h3>Specialization does not sacrifice the simple setting.</h3>
+            <p>
+              EEVEE remains competitive when prompt learning is run one benchmark at a time, with especially strong Formula and HumanEval scores.
+            </p>
+          </article>
+          <figure class="media-frame">
+            <div class="media-shell" style="--ratio: 3.47 / 1;">
+              <a class="figure-link" href="assets/figures/single-benchmark.pdf" aria-label="Open single benchmark result PDF">
+                <img src="assets/figures/single-benchmark.png" alt="Single-benchmark prompt learning scores across GPQA Diamond, Formula, TheoremQA, HumanEval, FiNER, and IFBench.">
+              </a>
+            </div>
+            <figcaption>Single-benchmark results after independent prompt learning.</figcaption>
+          </figure>
+        </div>
+
+        <div class="figure-story reverse">
+          <article>
+            <p class="section-kicker">Efficiency</p>
+            <h3>The router adds modest overhead.</h3>
+            <p>
+              Final-test token use averages 4.32k tokens per example, close to GEPA and far below ACE's expanding playbook context.
+            </p>
+          </article>
+          <figure class="media-frame">
+            <div class="media-shell" style="--ratio: 2.62 / 1;">
+              <a class="figure-link" href="assets/figures/token-cost.pdf" aria-label="Open token cost figure PDF">
+                <img src="assets/figures/token-cost.png" alt="Average token usage per test example for EEVEE, GEPA, and ACE.">
+              </a>
+            </div>
+            <figcaption>Average final-test token usage for EEVEE, GEPA, and ACE.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="cases" class="section article-section">
+      <div class="container narrow center-heading">
+        <p class="section-kicker">Case study</p>
+        <h2>Prompt learning captures reusable procedures.</h2>
+        <p>
+          Diagnostic retests compare empty prompts against final learned router and prompt sets. The strongest gains come when feedback can become a durable execution rule or output contract.
+        </p>
+      </div>
+
+      <div class="container case-grid">
+        <details class="case">
+          <summary>
+            <span class="case-type">Formula</span>
+            <h3>Formula: unit scale</h3>
+            <p>
+              Learned prompts enforce the supplied financial formula, keep the correct dollar scale, and emit strict numeric answers.
+            </p>
+            <span class="case-action">Open case details</span>
+          </summary>
+          <div class="case-detail">
+            <dl class="case-stats">
+              <div><dt>Qwen &Delta;</dt><dd>+9.5</dd></div>
+              <div><dt>DeepSeek &Delta;</dt><dd>+31.7</dd></div>
+              <div><dt>W&rarr;R / R&rarr;W</dt><dd>268 / 21</dd></div>
+              <div><dt>Runs+</dt><dd>6/6</dd></div>
+            </dl>
+            <p><strong>Task.</strong> Compute free cash flow from operating cash flow and capital expenditure.</p>
+            <p><strong>Baseline.</strong> The model reverses the subtraction and keeps the million-scale decimal, producing a negative value.</p>
+            <pre><code>-0.40</code></pre>
+            <p><strong>Learned.</strong> The final prompt applies the provided formula at dollar scale and emits a parseable numeric answer.</p>
+            <pre><code>Answer: 400000.00</code></pre>
+            <p class="case-takeaway">Takeaway: formula feedback turns into reusable rules for units, formula application, and final-answer formatting.</p>
+          </div>
+        </details>
+
+        <details class="case">
+          <summary>
+            <span class="case-type">Code</span>
+            <h3>HumanEval: executable body</h3>
+            <p>
+              The final prompt steers the model toward complete function bodies with indentation, accumulators, and returns.
+            </p>
+            <span class="case-action">Open case details</span>
+          </summary>
+          <div class="case-detail">
+            <dl class="case-stats">
+              <div><dt>Qwen &Delta;</dt><dd>+23.2</dd></div>
+              <div><dt>DeepSeek &Delta;</dt><dd>+48.8</dd></div>
+              <div><dt>W&rarr;R / R&rarr;W</dt><dd>193 / 16</dd></div>
+              <div><dt>Runs+</dt><dd>6/6</dd></div>
+            </dl>
+            <p><strong>Task.</strong> Complete a function that sums even values appearing at odd indices.</p>
+            <p><strong>Baseline.</strong> The model writes a bare expression without the required indented return statement.</p>
+            <pre><code>sum(lst[i] for i in range(1, len(lst), 2) if lst[i] % 2 == 0)</code></pre>
+            <p><strong>Learned.</strong> The learned prompt produces an executable function body with an accumulator and return.</p>
+            <pre><code>total = 0
+for i in range(1, len(lst), 2):
+    if lst[i] % 2 == 0:
+        total += lst[i]
+return total</code></pre>
+            <p class="case-takeaway">Takeaway: code feedback teaches executable output contracts, not just the underlying algorithm.</p>
+          </div>
+        </details>
+
+        <details class="case">
+          <summary>
+            <span class="case-type">Domain QA</span>
+            <h3>GPQA Diamond: knowledge underweighted</h3>
+            <p>
+              Generic reasoning can become stronger while missing domain priors, such as rocky-planet self-compression.
+            </p>
+            <span class="case-action">Open case details</span>
+          </summary>
+          <div class="case-detail">
+            <dl class="case-stats">
+              <div><dt>Qwen &Delta;</dt><dd>-3.7</dd></div>
+              <div><dt>DeepSeek &Delta;</dt><dd>-7.7</dd></div>
+              <div><dt>W&rarr;R / R&rarr;W</dt><dd>55 / 89</dd></div>
+              <div><dt>Runs+</dt><dd>1/6</dd></div>
+            </dl>
+            <p><strong>Task.</strong> Select the densest Earth-like exoplanet from mass and composition cues.</p>
+            <p><strong>Baseline.</strong> The model uses the rocky-planet prior that higher mass increases self-compression and density.</p>
+            <pre><code>For rocky planets of similar composition, radius grows sublinearly with
+mass because stronger gravity compresses the material. A five-Earth-mass
+rocky planet is therefore denser than Earth, while a half-Earth-mass
+rocky planet is less dense.
+
+Answer: the higher-mass Earth-composition option.</code></pre>
+            <p><strong>Learned.</strong> The final prompt performs formulaic density reasoning, treats same composition as constant density, and selects the Earth baseline.</p>
+            <pre><code>Density is mass divided by volume. For a spherical planet,
+rho = M / (4/3 pi R^3). If composition is the same, density is
+constant; the radius scales with mass so that all Earth-composition
+options remain approximately Earth density. Since the Earth-mass,
+Earth-radius option is exactly Earth-like, choose that option.</code></pre>
+            <p class="case-takeaway">Takeaway: stronger generic reasoning can still fail when the missing ingredient is domain knowledge.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="bibtex" class="section bib-section">
+      <div class="container narrow">
+        <p class="section-kicker">BibTeX</p>
+        <h2>Citation</h2>
+        <pre><code>@article{eevee2026,
+  title = {Eevee: Towards Test-time Prompt Learning in the Real World for Self-Improving Agents},
+  author = {Weixian Xu and Shilong Liu and Mengdi Wang},
+  year = {2026}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>EEVEE project page.</p>
+    </div>
+  </footer>
+</body>
+</html>
