@@ -11,7 +11,8 @@
 <p align="center">
   <a href="https://princeton-ai2-lab.github.io/EEVEE/">Website</a> |
   <a href="https://github.com/Princeton-AI2-Lab/EEVEE">Code</a> |
-  <a href="assets/paper.pdf">Paper</a>
+  <a href="assets/paper.pdf">PDF</a> |
+  <a href="https://arxiv.org/abs/2606.11182">arXiv</a>
 </p>
 
 EEVEE is a multi-dataset test-time prompt learning framework for LLM agents. It targets realistic task streams where inputs come from multiple datasets, domains, and evaluation formats instead of one stationary benchmark.
@@ -41,7 +42,7 @@ At inference time, EEVEE routes an input to one prompt slot and queries the targ
   <img src="assets/multi-benchmark-curve.png" alt="Incremental multi-benchmark retention results" width="760">
 </p>
 
-In the paper, EEVEE improves average multi-benchmark scores by 10.38 and 24.32 points over Qwen3-4B-Instruct and DeepSeek-V3.2, and outperforms GEPA and ACE by up to 37.2% and 48.2%. See the [paper](assets/paper.pdf) for the full evaluation, ablations, and analysis.
+In the paper, EEVEE improves average multi-benchmark scores by 10.38 and 24.32 points over Qwen3-4B-Instruct and DeepSeek-V3.2, and outperforms GEPA and ACE by up to 37.2% and 48.2%. See the [PDF](assets/paper.pdf) or [arXiv](https://arxiv.org/abs/2606.11182) for the full evaluation, ablations, and analysis.
 
 Main results on the four-benchmark suite. Scores are percentages averaged over three runs.
 
@@ -82,10 +83,12 @@ If you use EEVEE, please cite:
 
 ```bibtex
 @misc{xu2026eevee,
-  title = {Eevee: Towards Test-time Prompt Learning in the Real World for Self-Improving Agents},
-  author = {Xu, Weixian and Liu, Shilong and Wang, Mengdi},
+  title = {{EEVEE}: Towards Test-time Prompt Learning in the Real World for Self-Improving Agents},
+  author = {Weixian Xu and Shilong Liu and Mengdi Wang},
   year = {2026},
-  note = {Preprint}
+  eprint = {2606.11182},
+  archivePrefix = {arXiv},
+  url = {https://arxiv.org/abs/2606.11182}
 }
 ```
 
