@@ -6,6 +6,8 @@ This branch contains the static project page for:
 
 Open `index.html` directly in a browser, or publish the repository root with GitHub Pages.
 
+Paper: https://arxiv.org/abs/2606.11182
+
 Assets:
 
 - `assets/paper.pdf`: project paper.
