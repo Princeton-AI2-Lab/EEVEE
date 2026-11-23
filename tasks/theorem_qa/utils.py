@@ -31,15 +31,18 @@ def _clean_units(text: str) -> str:
     return value.strip()
 
 
-def _extract_direct_answer(text: Any) -> str:
+def _extract_direct_answer(text: Any, allow_bool: bool = True) -> str:
     value = str("" if text is None else text).strip().rstrip(".").rstrip("/").strip()
     if not value:
         return ""
     lower = value.lower()
-    if any(token in lower for token in ("yes", "true")):
-        return "True"
-    if any(token in lower for token in ("no", "false")):
-        return "False"
+    # Substring yes/no detection is only meaningful for boolean answers; for
+    # numeric answers it would turn e.g. "Note that ... = 12" into "False".
+    if allow_bool:
+        if any(token in lower for token in ("yes", "true")):
+            return "True"
+        if any(token in lower for token in ("no", "false")):
+            return "False"
     if _CHOICE_RE.search(value):
         return value
 
@@ -74,7 +77,7 @@ def _to_number(value: Any) -> Optional[float]:
 
 
 def _numbers_equal(predicted: Any, ground_truth: Any, *, integer: bool) -> bool:
-    pred_num = _to_number(_extract_direct_answer(predicted))
+    pred_num = _to_number(_extract_direct_answer(predicted, allow_bool=False))
     gold_num = _to_number(ground_truth)
     if pred_num is None or gold_num is None or math.isnan(pred_num) or math.isnan(gold_num):
         return False
