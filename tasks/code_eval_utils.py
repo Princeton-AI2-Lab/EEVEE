@@ -35,8 +35,6 @@ class CodeEvalBackendError(CodeEvalError):
 
 _COMMON_DEPENDENCIES = (
     ("evaluate", "evaluate"),
-    ("sentence_transformers", "sentence-transformers"),
-    ("transformers", "transformers"),
     ("datasets", "datasets"),
 )
 
@@ -108,8 +106,8 @@ def _build_backend_error_message(exc: BaseException) -> str:
     return (
         "Could not initialize HuggingFace evaluate/code_eval. "
         "This usually means the code judge dependencies are missing or incompatible "
-        "(for example evaluate, sentence-transformers, transformers, datasets, or "
-        f"huggingface_hub). Original error: {type(exc).__name__}: {exc}"
+        "(for example evaluate, datasets, or huggingface_hub). "
+        f"Original error: {type(exc).__name__}: {exc}"
     )
 
 
